@@ -9,9 +9,9 @@ async function getInstance() {
 
             // Nova instância do Sequelize e conexão com o Banco
             const sequelize = new Sequelize(
-                process.env.DATABASE,
-                process.env.USER,
-                process.env.PASSWORD, {
+                process.env.DB_NAME,
+                process.env.DB_USERNAME,
+                process.env.DB_PASSWORD, {
                 dialectOptions: {
                     connectTimeout: 60000 // 1 Minuto
                 },
@@ -21,11 +21,11 @@ async function getInstance() {
                     idle: 10000,
                     acquire: 30000,
                 },
-                host: process.env.HOST,
+                host: process.env.DB_HOST,
                 warnings: false,
                 logging: false,
-                dialect: process.env.DIALECT,
-                port: process.env.PORT
+                dialect: process.env.DB_DIALECT,
+                port: process.env.DB_PORT
             })
 
             console.log(`Connection with DataBase ${process.env.DATABASE} established`)
