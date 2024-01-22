@@ -5,17 +5,16 @@ class ClientService extends CommonService {
         super(models, modelName)
     }
 
-    async create(req, options, next) {
+    async create(object, req, options) {
         try {
-            const object = req.body
 
-            const verifyRegister = await super.findOne({ where: { document: object.document } }, next)
+            const verifyRegister = await super.findOne({ where: { document: object.document } })
             if (verifyRegister) throw Object.assign(new Error('Documento já cadastrado'), { statusCode: 409 })
 
             return await super.create(object)
 
         } catch (e) {
-            next(e)
+            throw e
         }
     }
 }

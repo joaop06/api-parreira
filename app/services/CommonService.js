@@ -5,55 +5,54 @@ class CommonService {
         this.modelName = modelName
     }
 
-    async findAndCountAll(req, options = {
-        where: req?.query?.id ? { id: req?.query?.id } : {}
-    }, next) {
+    async findAndCountAll(req, options = { where: req?.query?.id ? { id: req?.query?.id } : {} }) {
         try {
             Object.entries(req.query).map(([key, value]) => {
                 if (this.models[this.modelName].tableAttributes[key]) {
                     options.where[key] = value
                 }
             })
-
             return await this.models[this.modelName].findAndCountAll(options)
 
         } catch (e) {
-            next(e)
+            throw e
         }
     }
-    async create(object, options, next) {
+    async create(object, req, options) {
         try {
-            return await this.models[this.modelName].create(object)
+            return await this.models[this.modelName].create(object, options)
 
         } catch (e) {
-            next(e)
+            throw e
         }
     }
-    async update(req, options, next) {
+    async update(object, req, options) {
         try {
-            const object = req.body
-            const { id } = req.query
-            return await this.models[this.modelName].update(object, { where: { id } })
+            return await this.models[this.modelName].update(object, {
+                ...options,
+                where: ([undefined, null].includes(object?.id) && [undefined, null].includes(options?.where?.id)) ?
+                    { ...options.where } : { ...options.where, id: object.id || options.where.id || req.query?.id }
+            })
 
         } catch (e) {
-            next(e)
+            throw e
         }
     }
-    async delete(req, options, next) {
+    async delete(req, options) {
         try {
             const { id } = req.query
             return await this.models[this.modelName].destroy({ where: { id } })
 
         } catch (e) {
-            next(e)
+            throw e
         }
     }
 
-    async findOne(options, next) {
+    async findOne(options) {
         try {
             return await this.models[this.modelName].findOne(options)
         } catch (e) {
-            next(e)
+            throw e
         }
     }
 }

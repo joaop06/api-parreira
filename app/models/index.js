@@ -28,7 +28,7 @@ async function getInstance() {
                 port: process.env.DB_PORT
             })
 
-            console.log(`Connection with DataBase ${process.env.DATABASE} established`)
+            console.log(`Connection with DataBase ${process.env.DB_NAME} established`)
 
             // Mapeia os Atributos das Models dentro de `db.modelAttrs`
             db.modelAttrs = []
