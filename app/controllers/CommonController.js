@@ -16,7 +16,7 @@ class CommonController {
     async findAndCountAll(req, res, next) {
         try {
             const options = await this.treatRequestQuery(req)
-            const result = await this.service.findAndCountAll(req, undefined, next)
+            const result = await this.service.findAndCountAll(req, options)
             return res.status(200).send(result)
 
         } catch (e) {

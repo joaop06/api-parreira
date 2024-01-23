@@ -7,25 +7,23 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             label: 'Id'
         },
-        name: {
-            type: DataTypes.STRING(50),
+        client_id: {
+            type: DataTypes.INTEGER(20),
             allowNull: false,
-            label: 'Nome'
+            label: 'Id cliente'
         },
-        document: {
-            type: DataTypes.BIGINT,
+        status: {
+            type: DataTypes.STRING(20),
             allowNull: true,
-            unique: true,
-            label: 'Documento'
+            label: 'Status'
         }
     }
 
-    const model = sequelize?.define('Client', attrs, {
-        tableName: 'client',
+    const model = sequelize?.define('ServiceOrder', attrs, {
+        tableName: 'service_order',
         timestamps: true,
         paranoid: true
     })
 
     return { model, attrs }
 }
-

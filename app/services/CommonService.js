@@ -7,11 +7,6 @@ class CommonService {
 
     async findAndCountAll(req, options = { where: req?.query?.id ? { id: req?.query?.id } : {} }) {
         try {
-            Object.entries(req.query).map(([key, value]) => {
-                if (this.models[this.modelName].tableAttributes[key]) {
-                    options.where[key] = value
-                }
-            })
             return await this.models[this.modelName].findAndCountAll(options)
 
         } catch (e) {

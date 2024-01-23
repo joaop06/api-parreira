@@ -52,7 +52,10 @@ async function getInstance() {
                 }
             })
 
-            sequelize.sync({ force: db.force === true })
+            db.Client.hasMany(db.ServiceOrder, { foreignKey: 'client_id', sourceKey: 'id' })
+            db.ServiceOrder.belongsTo(db.Client, { foreignKey: 'client_id', targetKey: 'id' })
+
+            sequelize.sync({ force: false }) // Sinc tabelas não existentes no banco (não atualiza atributos)
             db.sequelize = sequelize
             db.Sequelize = Sequelize
             resolve(db)
