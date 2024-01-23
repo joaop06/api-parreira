@@ -3,8 +3,9 @@ module.exports = {
         name: 'backend',
         script: 'app.js',
         time: true,
-        // exec_mode: "fork",
-        // exec_mode: "cluster",
-        instances: 4
+        exec_mode: "cluster",
+        instances: 2,
+        autorestart: true,
+        loglevel: "info"
     }]
 }
