@@ -17,7 +17,12 @@ class CommonController {
         try {
             const options = await this.treatRequestQuery(req)
             const result = await this.service.findAndCountAll(req, options)
-            return res.status(200).send(result)
+
+            if(result.rows.length > 0){
+                return res.status(200).send(result)
+            } else {
+                return res.status(404).send(result)
+            }
 
         } catch (e) {
             next(e)
