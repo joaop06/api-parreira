@@ -1,9 +1,15 @@
 const models = require('../models')
 const { Op } = require('sequelize')
+const CommonService = require('../services/CommonService')
 
 class CommonController {
     constructor(service, modelName, modelAttrs) {
-        this._initController(service, modelName, modelAttrs)
+        if (!service && !modelName && !modelAttrs) {
+            this.service = new CommonService()
+        } else {
+            this._initController(service, modelName, modelAttrs)
+        }
+
     }
 
     async _initController(service, modelName, modelAttrs) {
@@ -13,16 +19,21 @@ class CommonController {
         this.modelAttrs = modelAttrs || []
     }
 
+    async login(req, res, next) {
+        try {
+            const result = await this.service.login(req)
+            res.status(200).send(result)
+
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async findAndCountAll(req, res, next) {
         try {
             const options = await this.treatRequestQuery(req)
             const result = await this.service.findAndCountAll(req, options)
-
-            if(result.rows.length > 0){
-                return res.status(200).send(result)
-            } else {
-                return res.status(404).send(result)
-            }
+            return res.status(200).send(result)
 
         } catch (e) {
             next(e)

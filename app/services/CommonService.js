@@ -5,6 +5,10 @@ class CommonService {
         this.modelName = modelName
     }
 
+    async login(req) {
+
+    }
+
     async findAndCountAll(req, options = { where: req?.query?.id ? { id: req?.query?.id } : {} }) {
         try {
             return await this.models[this.modelName].findAndCountAll(options)

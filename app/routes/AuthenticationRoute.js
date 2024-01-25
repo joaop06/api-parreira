@@ -8,7 +8,7 @@ class AuthenticationRoute {
     }
 
     _initRoutes() {
-        this.app.get(`/login`, this.authenticationController.login.bind(this.controller))
+        // this.app.get(`/login`, this.controller.login.bind(this.controller))
     }
 }
 
