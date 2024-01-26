@@ -1,29 +1,29 @@
 module.exports = (sequelize, DataTypes) => {
     const attrs = {
         id: {
-            type: DataTypes.INTEGER(20),
+            type: DataTypes ? DataTypes.INTEGER(20) : 'number',
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
             label: 'Id'
         },
         name: {
-            type: DataTypes.STRING(80),
+            type: DataTypes ? DataTypes.STRING(80) : 'string',
             allowNull: false,
             label: 'Nome'
         },
         email: {
-            type: DataTypes.STRING(120),
+            type: DataTypes ? DataTypes.STRING(120) : 'string',
             allowNull: false,
             label: 'E-mail'
         },
         username: {
-            type: DataTypes.STRING(20),
+            type: DataTypes ? DataTypes.STRING(20) : 'string',
             allowNull: false,
             label: 'Nome de usuário'
         },
         password: {
-            type: DataTypes.STRING(100),
+            type: DataTypes ? DataTypes.STRING(100) : 'string',
             allowNull: false,
             label: 'Senha'
         }

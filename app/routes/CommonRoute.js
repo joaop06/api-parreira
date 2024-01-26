@@ -10,8 +10,6 @@ class CommonRoute {
     }
 
     _initRoutes() {
-        this.app.post(`/login`, this.commonController.login.bind(this.commonController))
-
         this.app.get(`/${this.route}`, this.controller.findAndCountAll.bind(this.controller))
         this.app.post(`/${this.route}`, this.controller.create.bind(this.controller))
         this.app.put(`/${this.route}`, this.controller.update.bind(this.controller))

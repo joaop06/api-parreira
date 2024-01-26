@@ -1,4 +1,4 @@
-const { attrs } = require('../models/ServiceOrder.js')
+const { attrs } = require('../models/ServiceOrder.js')()
 const CommonController = require('./CommonController.js')
 const ServiceOrderService = require('../services/ServiceOrderService.js')
 

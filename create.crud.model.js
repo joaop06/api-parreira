@@ -89,7 +89,7 @@ module.exports = ${modelName}Route`
 
     // Criar arquivo Controller
     fs.writeFileSync(controllerFilePath,
-        `const { attrs } = require('../models/${modelName}.js')
+        `const { attrs } = require('../models/${modelName}.js')()
 const CommonController = require('./CommonController.js')
 const ${modelName}Service = require('../services/${modelName}Service.js')
 

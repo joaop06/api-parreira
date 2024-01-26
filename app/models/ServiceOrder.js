@@ -1,19 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
     const attrs = {
         id: {
-            type: DataTypes.INTEGER(20),
+            type: DataTypes ? DataTypes.INTEGER(20) : 'number',
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
             label: 'Id'
         },
         client_id: {
-            type: DataTypes.INTEGER(20),
+            type: DataTypes ? DataTypes.INTEGER(20) : 'number',
             allowNull: false,
             label: 'Id cliente'
         },
         status: {
-            type: DataTypes.STRING(20),
+            type: DataTypes ? DataTypes.STRING(20) : 'string',
             allowNull: true,
             label: 'Status'
         }

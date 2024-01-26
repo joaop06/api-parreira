@@ -1,12 +1,7 @@
-
 class CommonService {
     constructor(models, modelName) {
         this.models = models
         this.modelName = modelName
-    }
-
-    async login(req) {
-
     }
 
     async findAndCountAll(req, options = { where: req?.query?.id ? { id: req?.query?.id } : {} }) {
@@ -27,20 +22,33 @@ class CommonService {
     }
     async update(object, req, options) {
         try {
-            return await this.models[this.modelName].update(object, {
-                ...options,
-                where: ([undefined, null].includes(object?.id) && [undefined, null].includes(options?.where?.id)) ?
-                    { ...options.where } : { ...options.where, id: object.id || options.where.id || req.query?.id }
-            })
+            /**
+             * Procura o ID no objeto de update, query da requisição ou no `options.where` (Respectivamente)
+             * Caso não encontre, usará as demais condições { ...options.where }
+             */
+            const where = object?.id || req?.query?.id || options?.where?.id ?
+                { ...options.where, id: object?.id || req?.query?.id || options?.where?.id } : { ...options.where }
+
+
+            // Erro caso where seja vazio
+            if (Object.keys(where).length === 0) {
+                throw Object.assign(new Error('Condição para atualizar não informada'), { statusCode: 400 })
+            }
+
+            return await this.models[this.modelName].update(object, { ...options, where })
 
         } catch (e) {
             throw e
         }
     }
-    async delete(req, options) {
+    async delete(options) {
         try {
-            const { id } = req.query
-            return await this.models[this.modelName].destroy({ where: { id } })
+            // Erro caso where seja vazio
+            if (Object.keys(options?.where).length === 0) {
+                throw Object.assign(new Error('Condição para deletar não informada'), { statusCode: 400 })
+            }
+
+            return await this.models[this.modelName].destroy(options)
 
         } catch (e) {
             throw e
@@ -50,6 +58,14 @@ class CommonService {
     async findOne(options) {
         try {
             return await this.models[this.modelName].findOne(options)
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async findAll(options) {
+        try {
+            return await this.models[this.modelName].findAll(options)
         } catch (e) {
             throw e
         }

@@ -1,4 +1,4 @@
-const { attrs } = require('../models/Users.js')
+const { attrs } = require('../models/Users.js')()
 const CommonController = require('./CommonController.js')
 const UsersService = require('../services/UsersService.js')
 

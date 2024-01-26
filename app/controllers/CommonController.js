@@ -9,7 +9,6 @@ class CommonController {
         } else {
             this._initController(service, modelName, modelAttrs)
         }
-
     }
 
     async _initController(service, modelName, modelAttrs) {
@@ -57,8 +56,9 @@ class CommonController {
         let transaction
         try {
             transaction = await this.models.sequelize.transaction()
-            const result = await this.service.update(req.body, req, { transaction }, next)
+            const result = await this.service.update(req.body, req, { transaction })
             await transaction.commit()
+
             return res.status(200).send(result)
 
         } catch (e) {
@@ -70,18 +70,23 @@ class CommonController {
         let transaction
         try {
             transaction = await this.models.sequelize.transaction()
-            const result = await this.service.delete(req, { transaction }, next)
-
-            if (result !== 1) throw Object.assign(new Error('Erro ao deletar'), { statusCode: 400 })
-
+            const options = await this.treatRequestQuery(req)
+            const rowsDeleted = await this.service.delete({ ...options, transaction })
             await transaction.commit()
-            return res.status(200).send({ message: 'Sucesso ao deletar!' })
+
+
+            if (rowsDeleted < 1) {
+                return res.status(200).send({ message: `Nenhum registro encontrado para deletar` })
+            } else {
+                return res.status(200).send({ message: `Sucesso ao deletar ${rowsDeleted} registro(s)!` })
+            }
 
         } catch (e) {
             if (transaction && !transaction.finished) await transaction.rollback()
             next(e)
         }
     }
+
 
     async treatRequestQuery(req) {
         // Tratativa Where
@@ -102,13 +107,11 @@ class CommonController {
             .map(async (key) => { where[key] = await this.mapOrAttr(req.query[key], key, req.route.path) })
         )
 
-        // // Remove atributo não existente na tabela
-        // if (options.removeNotInTable == true) {
-        //     // remove table not existing query
-        //     await Promise.all(Object.keys(where)
-        //         .filter(k => !Object.keys(this.modelAttrs).includes(k))
-        //         .map(k => { delete where[k] }))
-        // }
+        // Remove atributo não existente na tabela
+        await Promise.all(Object.keys(where)
+            .filter(key => !Object.keys(this.modelAttrs).includes(key))
+            .map(key => { delete where[key] }))
+
 
         // Busca de valores parciais
         await Promise.all(Object.keys(where)
@@ -117,23 +120,9 @@ class CommonController {
             .map(key => { where[key] = { [Op.like]: where[key] } })
         )
 
-
         // Paginação
-        // let limit = req?.query?.perPage ? parseInt(req?.query?.perPage) : 10
-        // let offset = (req?.query?.page ? parseInt(req?.query?.page) - 1 : 0) * limit
-
-        // let limit, offset
-        // if (req.query.page && req.query.perPage) {
-        //     const page = Number(req.query.page) - 1
-        //     const perPage = Number(req.query.perPage)
-        //     offset = page * perPage
-        //     limit = perPage
-        // }
-
-        // const page = req.query.page ? Number(req.query.page) - 1 : 1
         let limit = req.query.perPage ? Number(req.query.perPage) : 10
         let offset = (req.query.page ? Number(req.query.page) - 1 : 0) * limit
-
 
         // Ordenação
         let order
