@@ -47,7 +47,7 @@ function createModule() {
         `module.exports = (sequelize, DataTypes) => {
     const attrs = {
         id: {
-            type: DataTypes.INTEGER(20),
+            type: DataTypes ? DataTypes.INTEGER(20) : 'number',
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
