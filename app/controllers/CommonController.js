@@ -18,16 +18,6 @@ class CommonController {
         this.modelAttrs = modelAttrs || []
     }
 
-    async login(req, res, next) {
-        try {
-            const result = await this.service.login(req)
-            res.status(200).send(result)
-
-        } catch (e) {
-            next(e)
-        }
-    }
-
     async findAndCountAll(req, res, next) {
         try {
             const options = await this.treatRequestQuery(req)

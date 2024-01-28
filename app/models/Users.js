@@ -15,17 +15,30 @@ module.exports = (sequelize, DataTypes) => {
         email: {
             type: DataTypes ? DataTypes.STRING(120) : 'string',
             allowNull: false,
+            unique: true,
             label: 'E-mail'
         },
         username: {
             type: DataTypes ? DataTypes.STRING(20) : 'string',
             allowNull: false,
+            unique: true,
             label: 'Nome de usuário'
         },
         password: {
             type: DataTypes ? DataTypes.STRING(100) : 'string',
             allowNull: false,
             label: 'Senha'
+        },
+        group_id: {
+            type: DataTypes ? DataTypes.INTEGER(20) : 'number',
+            allowNull: true,
+            label: 'Grupo'
+        },
+        active: {
+            type: DataTypes ? DataTypes.BOOLEAN : 'boolean',
+            allowNull: false,
+            defaultValue: true,
+            label: 'Ativo'
         }
     }
 

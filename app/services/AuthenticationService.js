@@ -1,9 +1,10 @@
-const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-process.env.JWT_SECRET
-
 class Authentication {
+
+    static async getToken(data) {
+        return jwt.sign(data, process.env.JWT_SECRET)
+    }
 
     static async verifyToken() { }
 }
