@@ -9,8 +9,8 @@ class UsersController extends CommonController {
 
     async login(req, res, next) {
         try {
-            const result = await this.service.login(req.body, req)
-            res.status(result.status).send({ ...result.data })
+            const result = await this.service.login(req.body)
+            res.status(200).send(result)
 
         } catch (e) {
             next(e)

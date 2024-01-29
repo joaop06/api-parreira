@@ -52,8 +52,31 @@ async function getInstance() {
                 }
             })
 
+
+            /**
+             * Relacionamentos das Tabelas (Associations)
+             */
+
+            // Client
             db.Client.hasMany(db.ServiceOrder, { foreignKey: 'client_id', sourceKey: 'id' })
+
+            // ServiceOrder
             db.ServiceOrder.belongsTo(db.Client, { foreignKey: 'client_id', targetKey: 'id' })
+
+            // Group
+            db.Group.hasMany(db.Users, { foreignKey: 'group_id', sourceKey: 'id' })
+            db.Group.belongsToMany(db.Permissions, { through: db.GroupPermissions, foreignKey: 'group_id' })
+
+            // Users
+            db.Users.belongsTo(db.Group, { foreignKey: 'group_id', targetKey: 'id' })
+
+            // Permissions
+            db.Permissions.belongsToMany(db.Group, { through: db.GroupPermissions, foreignKey: 'permission_id' })
+
+            // GroupPermissions
+            db.GroupPermissions.belongsTo(db.Group, { foreignKey: 'group_id' })
+            db.GroupPermissions.belongsTo(db.Permissions, { foreignKey: 'permission_id' })
+
 
             sequelize.sync({ force: false }) // Sinc tabelas não existentes no banco (não atualiza atributos)
             db.sequelize = sequelize

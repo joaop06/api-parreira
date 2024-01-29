@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         group_id: {
             type: DataTypes ? DataTypes.INTEGER(20) : 'number',
-            allowNull: true,
+            allowNull: false,
             label: 'Grupo'
         },
         active: {
