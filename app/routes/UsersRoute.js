@@ -12,4 +12,4 @@ class UsersRoute extends CommonRoute {
     }
 }
 
-module.exports = UsersRoute
+module.exports = (app) => { return new UsersRoute(app) }
