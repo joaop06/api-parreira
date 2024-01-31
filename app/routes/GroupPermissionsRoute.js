@@ -4,7 +4,6 @@ const GroupPermissionsController = require('../controllers/GroupPermissionsContr
 class GroupPermissionsRoute extends CommonRoute {
     constructor(app) {
         super(app, new GroupPermissionsController(), 'group-permissions')
-        this._initRoutes()
     }
 
     _initRoutes() {

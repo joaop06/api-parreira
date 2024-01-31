@@ -4,7 +4,6 @@ const PermissionsController = require('../controllers/PermissionsController.js')
 class PermissionsRoute extends CommonRoute {
     constructor(app) {
         super(app, new PermissionsController(), 'permissions')
-        this._initRoutes()
     }
 
     _initRoutes() {

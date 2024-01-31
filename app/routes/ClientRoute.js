@@ -4,7 +4,6 @@ const ClientController = require('../controllers/ClientController.js')
 class ClientRoute extends CommonRoute {
     constructor(app) {
         super(app, new ClientController(), 'client')
-        this._initRoutes()
     }
 
     _initRoutes() {

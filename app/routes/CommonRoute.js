@@ -5,6 +5,8 @@ class CommonRoute {
         this.app = app
         this.controller = controller
         this.route = route
+
+        this._initRoutes()
     }
 
     _initRoutes() {

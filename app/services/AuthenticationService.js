@@ -17,7 +17,7 @@ class AuthenticationService {
                     ...options
                 })
 
-                return { ...decoded, permissions: result?.Permissions || [] }
+                return { user: decoded, permissions: result?.Permissions || [] }
             })
 
         } catch (e) {

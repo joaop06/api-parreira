@@ -75,7 +75,6 @@ const ${modelName}Controller = require('../controllers/${modelName}Controller.js
 class ${modelName}Route extends CommonRoute {
     constructor(app) {
         super(app, new ${modelName}Controller(), '${routeName}')
-        this._initRoutes()
     }
 
     _initRoutes() {

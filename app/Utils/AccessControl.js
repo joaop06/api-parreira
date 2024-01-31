@@ -21,24 +21,28 @@ module.exports = async (req, res, next) => {
             return next()
         }
 
-        const { data: user, permissions } = await AuthenticationService.verifyToken(req.headers.authorization || req.query.authorization, models)
+        const token = req.headers.authorization || req.query.authorization
+
+        if (!token) throw new Error('Token de acesso não informado')
+
+        const { user, permissions } = await AuthenticationService.verifyToken(token, models)
         req.user = user
         req.permissions = permissions
 
-        const allowed = (path, operations) => {
+        const allowed = (path, permissions) => {
             if (path === '/') return true
-            return operations.filter(operation => path === operation.back_url).length > 0
+            return permissions.filter(permission => req.path === permission.back_url).length > 0
         }
 
         if (!allowed(req.path, permissions)) {
-            throw new Error('Not authorized')
+            throw new Error('Acesso não autorizado')
         } else {
             return next()
         }
 
     } catch (e) {
         res.status(401).send({
-            message: 'Acesso não autorizado. Tente novamente o login!',
+            message: e.message,
             redirect: '/login'
         })
     }
