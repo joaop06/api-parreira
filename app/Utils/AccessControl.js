@@ -13,17 +13,18 @@ module.exports = async (req, res, next) => {
         // Rotas que não precisam de Autenticação
         const noAuth = [
             { path: '/login', method: 'POST' },
-            { path: '/users/login', method: 'POST' }
         ]
 
         // Verifica se o acesso é em algum rota sem Autenticação
         if (noAuth.findIndex(route => route.path === req.path && route.method === req.method) >= 0) {
             return next()
+
+        } else if (noAuth.findIndex(route => route.path === req.path && route.method !== req.method) >= 0) {
+            throw Object.assign(new Error('Method Not Allowed'), { statusCode: 405 })
         }
 
         const token = req.headers.authorization || req.query.authorization
-
-        if (!token) throw new Error('Token de acesso não informado')
+        if (!token) throw Object.assign(new Error('Token de acesso não informado'), { statusCode: 401, send: { redirect: '/login' } })
 
         const { user, permissions } = await AuthenticationService.verifyToken(token, models)
         req.user = user
@@ -35,15 +36,12 @@ module.exports = async (req, res, next) => {
         }
 
         if (!allowed(req.path, permissions)) {
-            throw new Error('Acesso não autorizado')
+            throw Object.assign(new Error('Acesso não autorizado'), { statusCode: 401, send: { redirect: '/login' } })
         } else {
             return next()
         }
 
     } catch (e) {
-        res.status(401).send({
-            message: e.message,
-            redirect: '/login'
-        })
+        return next(e)
     }
 }

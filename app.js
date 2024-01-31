@@ -11,7 +11,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(AccessControl)
 
-const server = app.listen(process.env.SERVER_PORT, () => {
+app.listen(process.env.SERVER_PORT, () => {
     console.log(`Server is running on port ${process.env.SERVER_PORT}`)
 })
 
@@ -19,5 +19,8 @@ require('./app/routes')(app)
 
 app.use(function onError(err, req, res, next) {
     const statusCode = err.statusCode || 500
-    res.status(statusCode).json({ error: err.message })
+    res.status(statusCode).send({
+        error: err.message,
+        ...err.send
+    })
 }) 
