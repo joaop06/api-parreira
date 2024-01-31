@@ -8,7 +8,7 @@ class UsersRoute extends CommonRoute {
     }
 
     _initRoutes() {
-        this.app.post('/login', this.controller.login.bind(this.controller))
+        this.app.post(`/${this.route}/login`, this.controller.login.bind(this.controller))
         super._initRoutes()
     }
 }

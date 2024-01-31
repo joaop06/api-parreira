@@ -12,7 +12,8 @@ module.exports = async (req, res, next) => {
 
         // Rotas que não precisam de Autenticação
         const noAuth = [
-            { path: '/login', method: 'POST' }
+            { path: '/login', method: 'POST' },
+            { path: '/users/login', method: 'POST' }
         ]
 
         // Verifica se o acesso é em algum rota sem Autenticação
