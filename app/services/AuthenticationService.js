@@ -9,7 +9,11 @@ class AuthenticationService {
     static async verifyToken(token, models, options = {}) {
         try {
             return jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-                if (err) return {}
+                if (err) {
+                    if (err.name == 'TokenExpiredError') {
+                        throw Object.assign(new Error('Token de acesso expirado'), { statusCode: 401, send: { redirect: '/login' } })
+                    }
+                }
 
                 const result = await models.Group.findOne({
                     where: { id: decoded.group_id },

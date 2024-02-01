@@ -22,7 +22,7 @@ class CommonController {
         try {
             const options = await this.treatRequestQuery(req)
             const result = await this.service.findAndCountAll(req, options)
-            return res.status(200).send(result)
+            return res.status(200).send({ totalCount: result.count, totalRecords: result.rows.length, rows: result.rows })
 
         } catch (e) {
             next(e)
