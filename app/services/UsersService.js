@@ -52,6 +52,12 @@ class UsersService extends CommonService {
         }
     }
 
+    async findAndCountAll(req, options) {
+        options.include = [{ model: this.models.Group }]
+
+        return super.findAndCountAll(req, options)
+    }
+
     async create(object, req, options) {
         // Verifica dados duplicados
         const verifyData = await super.findOne({

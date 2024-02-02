@@ -15,6 +15,9 @@ app.listen(process.env.SERVER_PORT, () => {
     console.log(`Server is running on port ${process.env.SERVER_PORT}`)
 })
 
+// Test Route
+app.get('/test', (req, res) => res.send('This is a test response from the server'))
+
 require('./app/routes')(app)
 
 app.use(function onError(err, req, res, next) {
