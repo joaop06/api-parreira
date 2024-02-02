@@ -72,6 +72,15 @@ class UsersService extends CommonService {
 
         return await super.create({ ...object, password: hash }, req, options)
     }
+
+    async tableAttributes(modelAttrs) {
+        try {
+            return await super.tableAttributes(modelAttrs, ['password'])
+
+        } catch (e) {
+            throw e
+        }
+    }
 }
 
 module.exports = UsersService

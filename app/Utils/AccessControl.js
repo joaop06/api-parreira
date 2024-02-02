@@ -35,7 +35,7 @@ module.exports = async (req, res, next) => {
             return permissions.filter(permission => req.path === permission.back_url).length > 0
         }
 
-        if (!allowed(req.path, permissions) && user.group_id !== 1) {
+        if ((!allowed(req.path, permissions) && user.group_id !== 1) && !req.path.includes('/table-attributes')) {
             throw Object.assign(new Error('Acesso não autorizado'), { statusCode: 401, send: { redirect: '/login' } })
         } else {
             return next()

@@ -70,6 +70,37 @@ class CommonService {
             throw e
         }
     }
+
+    async tableAttributes(modelAttrs, excludeAttrs = []) {
+        try {
+            return Object.keys(this.models[this.modelName].tableAttributes)
+                .map(attr => {
+                    if (attr === "createdAt") {
+                        return {
+                            field: "createdAt",
+                            type: "datatime",
+                            allowNull: true,
+                            label: "Criado em"
+                        }
+
+                    } else if (attr === "updatedAt") {
+                        return {
+                            field: "updatedAt",
+                            type: "datatime",
+                            allowNull: true,
+                            label: "Atualizado em"
+                        }
+
+                    } else {
+                        return { field: attr, ...modelAttrs[attr] }
+                    }
+                })
+                .filter(attr => !excludeAttrs.includes(attr.field) && attr.field !== 'deletedAt')
+
+        } catch (e) {
+            throw e
+        }
+    }
 }
 
 module.exports = CommonService

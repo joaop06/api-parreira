@@ -14,6 +14,7 @@ class CommonRoute {
         this.app.post(`/${this.route}`, this.controller.create.bind(this.controller))
         this.app.put(`/${this.route}`, this.controller.update.bind(this.controller))
         this.app.delete(`/${this.route}`, this.controller.delete.bind(this.controller))
+        this.app.get(`/${this.route}/table-attributes`, this.controller.tableAttributes.bind(this.controller))
     }
 }
 

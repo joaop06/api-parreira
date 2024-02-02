@@ -77,6 +77,14 @@ class CommonController {
         }
     }
 
+    async tableAttributes(req, res, next) {
+        try {
+            return res.status(200).send(await this.service.tableAttributes(this.modelAttrs))
+        } catch (e) {
+            next(e)
+        }
+    }
+
 
     async treatRequestQuery(req) {
         // Tratativa Where
