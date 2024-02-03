@@ -16,6 +16,26 @@ class UsersController extends CommonController {
             next(e)
         }
     }
+
+    async recoverPassword(req, res, next) {
+        try {
+            const result = await this.service.recoverPassword(req.body)
+            res.status(200).send(result)
+
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async sendEmailRecoverPassword(req, res, next) {
+        try {
+            const result = await this.service.sendEmailRecoverPassword(req.body)
+            res.status(200).send(result)
+
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 module.exports = UsersController

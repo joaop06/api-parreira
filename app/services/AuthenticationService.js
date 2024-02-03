@@ -15,6 +15,13 @@ class AuthenticationService {
                     }
                 }
 
+                // Retorno para Recuperação de Senha de Usuário
+                if (decoded.isRecoverPass) {
+                    return { ...decoded }
+                }
+
+
+                // Rotas Permitidas para acesso normal do Usuário
                 const result = await models.Group.findOne({
                     where: { id: decoded.group_id },
                     include: [{ model: models.Permissions }],

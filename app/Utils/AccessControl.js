@@ -13,6 +13,7 @@ module.exports = async (req, res, next) => {
         // Rotas que não precisam de Autenticação
         const noAuth = [
             { path: '/login', method: 'POST' },
+            { path: '/send-email-recover-password', method: 'POST' },
         ]
 
         // Verifica se o acesso é em algum rota sem Autenticação
@@ -23,10 +24,21 @@ module.exports = async (req, res, next) => {
             throw Object.assign(new Error('Method Not Allowed'), { statusCode: 405 })
         }
 
+        // Validação se existe token
         const token = req.headers.authorization || req.query.authorization
         if (!token) throw Object.assign(new Error('Token de acesso não informado'), { statusCode: 401, send: { redirect: '/login' } })
 
-        const { user, permissions } = await AuthenticationService.verifyToken(token, models)
+
+        // Decodificação do Token de acesso
+        const decodedToken = await AuthenticationService.verifyToken(token, models)
+
+        // Acesso para recuperação de Senha
+        if (decodedToken.isRecoverPass) {
+            return next()
+        }
+
+        const { user, permissions } = decodedToken
+        // Acesso normal do Usuário
         req.user = user
         req.permissions = permissions
 
