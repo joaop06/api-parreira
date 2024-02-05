@@ -41,7 +41,7 @@ class UsersService extends CommonService {
 
 
             // Gerar token
-            let token = await AuthenticationService.getToken(user)
+            let token = await AuthenticationService.getToken(user, process.env.JWT_SECRET, process.env.JWT_EXPIRES_IN)
 
             return {
                 redirect: "/",
@@ -92,9 +92,19 @@ class UsersService extends CommonService {
         }
     }
 
-    async recoverPassword(object) {
+    async recoverPassword(req) {
         try {
-            return await this.service.recoverPassword(object)
+            const password = await Encrypt.createHash(req.body.new_password)
+            const { id, email } = req.recoverPass
+
+            // Atualiza a nova senha
+            await this.models.Users.update({ password }, { where: { id } }).then(res => {
+                if (!res || res[0] !== 1) {
+                    throw Object.assign(new Error('Erro ao atualizar nova senha'), { statusCode: 400 })
+                }
+            })
+
+            return { message: 'Senha alterada com sucesso' }
 
         } catch (e) {
             throw e
@@ -106,12 +116,16 @@ class UsersService extends CommonService {
             const user = await super.findOne({ where: { ...object } })
             if (!user) throw new Error('Usuário não encontrado')
 
-            const token = await AuthenticationService.getToken({
-                id: user.id,
-                email: user.email,
-                ...object,
-                isRecoverPass: true
-            })
+            const token = await AuthenticationService.getToken(
+                {
+                    id: user.id,
+                    email: user.email,
+                    ...object,
+                    isRecoverPass: true
+                },
+                process.env.JWT_SECRET_RECOVER_PASS,
+                process.env.JWT_RECOVER_PASS_EXPIRES_IN
+            )
 
             const html = await this.mountHtmlToSendEmail(user.name, token)
 

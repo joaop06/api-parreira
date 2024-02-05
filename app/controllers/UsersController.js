@@ -19,7 +19,7 @@ class UsersController extends CommonController {
 
     async recoverPassword(req, res, next) {
         try {
-            const result = await this.service.recoverPassword(req.body)
+            const result = await this.service.recoverPassword(req)
             res.status(200).send(result)
 
         } catch (e) {

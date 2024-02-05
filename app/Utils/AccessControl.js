@@ -34,6 +34,7 @@ module.exports = async (req, res, next) => {
 
         // Acesso para recuperação de Senha
         if (decodedToken.isRecoverPass) {
+            req.recoverPass = decodedToken
             return next()
         }
 

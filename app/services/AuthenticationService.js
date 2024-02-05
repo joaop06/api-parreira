@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken')
 
 class AuthenticationService {
 
-    static async getToken(data) {
-        return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: parseInt(process.env.JWT_EXPIRES_IN) })
+    static async getToken(data, secret, timeExpires) {
+        return jwt.sign(data, secret, { expiresIn: parseInt(timeExpires) })
     }
 
     static async verifyToken(token, models, options = {}) {
