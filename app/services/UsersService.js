@@ -1,3 +1,4 @@
+const moment = require('moment')
 const { Op } = require('sequelize')
 const Encrypt = require('../Utils/Encrypt.js')
 const SendEmail = require('../Utils/SendEmail.js')
@@ -95,13 +96,25 @@ class UsersService extends CommonService {
     async recoverPassword(req) {
         try {
             const password = await Encrypt.createHash(req.body.new_password)
-            const { id, email } = req.recoverPass
+            const { id, name, email } = req.recoverPass
 
             // Atualiza a nova senha
-            await this.models.Users.update({ password }, { where: { id } }).then(res => {
+            await this.models.Users.update({ password }, { where: { id } }).then(async (res) => {
                 if (!res || res[0] !== 1) {
                     throw Object.assign(new Error('Erro ao atualizar nova senha'), { statusCode: 400 })
                 }
+
+                const token = await AuthenticationService.getToken(
+                    { id, email, isRecoverPass: true },
+                    process.env.JWT_SECRET_RECOVER_PASS,
+                    process.env.JWT_RECOVER_PASS_EXPIRES_IN
+                )
+
+                this.sendEmail.sendMail({
+                    to: email,
+                    subject: 'Alteração de Senha Realizada',
+                    html: SendEmail.htmlPasswordChanged(name, token, moment(new Date()).format('DD/MM/YYYY'), req._remoteAddress.replace('::ffff:', ''))
+                })
             })
 
             return { message: 'Senha alterada com sucesso' }
@@ -116,128 +129,23 @@ class UsersService extends CommonService {
             const user = await super.findOne({ where: { ...object } })
             if (!user) throw new Error('Usuário não encontrado')
 
+            const { id, name, email } = user
             const token = await AuthenticationService.getToken(
-                {
-                    id: user.id,
-                    email: user.email,
-                    ...object,
-                    isRecoverPass: true
-                },
+                { id, email, name, ...object, isRecoverPass: true },
                 process.env.JWT_SECRET_RECOVER_PASS,
                 process.env.JWT_RECOVER_PASS_EXPIRES_IN
             )
-
-            const html = await this.mountHtmlToSendEmail(user.name, token)
 
             // Parâmetros possíveis { to, subject, html, attachments }
             return await this.sendEmail.sendMail({
                 to: user.email,
                 subject: 'Solicitação de redefinição de Senha',
-                html
+                html: SendEmail.messageToSendEmail(user.name, token)
             })
 
         } catch (e) {
             throw e
         }
-    }
-
-    async mountHtmlToSendEmail(nameUser, token) {
-        return `<!DOCTYPE html>
-        <html lang="pt-br">
-        
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Recuperação de Senha</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100vh;
-                    background-color: #f4f4f4;
-                }
-        
-                .banner {
-                    max-width: 400px;
-                    text-align: center;
-                    padding: 20px;
-                    background-color: #fff;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    border-radius: 8px;
-                }
-        
-                h2 {
-                    color: #333;
-                }
-        
-                p {
-                    color: #666;
-                    margin-bottom: 20px;
-                }
-        
-                form {
-                    display: flex;
-                    flex-direction: column;
-                }
-        
-                label {
-                    text-align: left;
-                    margin-bottom: 5px;
-                    color: #333;
-                }
-        
-                input {
-                    padding: 10px;
-                    margin-bottom: 15px;
-                    width: 100%;
-                    box-sizing: border-box;
-                }
-        
-                button {
-                    padding: 10px 20px;
-                    background-color: #007bff;
-                    color: #fff;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 16px;
-                    margin-top: 15px;
-                }
-        
-                button:hover {
-                    background-color: #0056b3;
-                }
-        
-                a {
-                    text-decoration: none;
-                    color: white;
-                }
-        
-                request_again {
-                    text-decoration: double;
-                }
-            </style>
-        </head>
-        
-        <body>
-            <div class="banner">
-                <h2>Recuperação de Senha</h2>
-                <p>
-                    Olá, ${nameUser.toUpperCase()}!<br />
-                    Você será redirecionado a tela de Redefinição de Senha. O link de recuperação expirará em 1 hora.
-                </p>
-        
-                <button type="submit">
-                    <a href="https://y74x2h-3000.csb.app/redefinir-senha/${token}" target="_blank">Redefinir Senha</a>
-                </button>
-            </div>
-        </body>
-        
-        </html>`
     }
 }
 

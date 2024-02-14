@@ -38,7 +38,7 @@ class CommonController {
             return res.status(201).end()
 
         } catch (e) {
-            if (transaction) await transaction.rollback()
+            if (transaction && !transaction.finished) await transaction.rollback()
             next(e)
         }
     }
@@ -52,7 +52,7 @@ class CommonController {
             return res.status(200).send(result)
 
         } catch (e) {
-            if (transaction) await transaction.rollback()
+            if (transaction && !transaction.finished) await transaction.rollback()
             next(e)
         }
     }
